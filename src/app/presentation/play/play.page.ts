@@ -93,6 +93,7 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     ship: new Image(),
     asteroid: new Image(),
     bg: new Image(),
+    shoot: new Image(),
   };
 
   private ready = false;
@@ -120,14 +121,17 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       this.keys[e.key] = false;
     }
   };
-
   private shoot() {
     if (this.paused() || this.gameOver()) return;
+    const scale = 0.5; // reduce a la mitad el sprite
+    const w = this.img.shoot.width * scale || 6;
+    const h = this.img.shoot.height * scale || 12;
+
     this.bullets.push({
-      x: this.player.x + this.player.w / 2 - 3,
-      y: this.player.y - 10,
-      w: 6,
-      h: 12,
+      x: this.player.x + this.player.w / 2 - w / 2,
+      y: this.player.y - h,
+      w,
+      h,
       vy: -10,
       alive: true,
     });
@@ -252,9 +256,15 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       ctx.fillRect(this.player.x, this.player.y, this.player.w, this.player.h);
     }
 
-    // balas (puedes dejarlas como rectángulos)
-    ctx.fillStyle = '#fff';
-    for (const b of this.bullets) ctx.fillRect(b.x, b.y, b.w, b.h);
+    // balas
+    if (this.ready) {
+      for (const b of this.bullets) {
+        ctx.drawImage(this.img.shoot, b.x, b.y, b.w, b.h);
+      }
+    } else {
+      ctx.fillStyle = '#fff';
+      for (const b of this.bullets) ctx.fillRect(b.x, b.y, b.w, b.h);
+    }
 
     // enemigos
     if (this.ready) {
@@ -308,7 +318,8 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     return Promise.all([
       setSrc(this.img.ship, 'assets/sprites/ship.png'),
       setSrc(this.img.asteroid, 'assets/sprites/asteroid.png'),
-      setSrc(this.img.bg, 'assets/sprites/bg.png'), // si no tienes fondo, quítalo
+      setSrc(this.img.bg, 'assets/sprites/bg.png'),
+      setSrc(this.img.shoot, 'assets/sprites/shoot.png'),
     ]).then(() => {});
   }
 
@@ -332,9 +343,8 @@ export class PlayPage implements AfterViewInit, OnDestroy {
   resume() {
     this.paused.set(false);
   }
-  
+
   goMenu() {
     this.router.navigateByUrl('/');
   }
-  
 }

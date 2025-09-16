@@ -4,7 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #2d1b69 0%, #1a0033 50%, #0f0f23 100%);
-  min-height: 100vh;
+  min-height: 85vh;
   font-family: 'Arial', sans-serif;
   position: relative;
 }

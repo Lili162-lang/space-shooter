@@ -1,15 +1,18 @@
 .play {
   position: relative;
   width: 480px;
+  height: 100%;
+  overflow: hidden;
   margin: 20px auto;
 }
 
 canvas {
   width: 480px;
-  height: 720px;
+  height: 86vh !important;
   border: 2px solid #4a0e4e;
   background: linear-gradient(180deg, #0f0f23 0%, #1a0033 50%, #2d1b69 100%);
   display: block;
+  overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
 }
