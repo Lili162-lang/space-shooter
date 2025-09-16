@@ -1,20 +1,32 @@
 <section class="play">
-    <canvas #canvas></canvas>
-  
-    <!-- Overlay controles -->
-    <div class="overlay" *ngIf="paused() || gameOver()">
-      <form *ngIf="gameOver()" (submit)="submitAlias($event.target); $event.preventDefault()">
-        <h3>Guardar puntaje</h3>
-        <label>Alias</label>
-        <input name="alias" minlength="3" required />
-        <button type="submit">Enviar</button>
-        <a routerLink="/ranking">Ver ranking</a>
-      </form>
-      <p *ngIf="paused() && !gameOver()">P para reanudar</p>
+  <canvas #canvas></canvas>
+
+  <!-- Overlay controles -->
+  @if (paused() || gameOver()) {
+  <div class="overlay">
+    @if (gameOver()) {
+    <form (submit)="submitAlias($event.target); $event.preventDefault()">
+      <h3>Guardar puntaje</h3>
+      <div class="score-info">
+        <p>Score {{ score() }} | MaxCombo {{ maxCombo() }} | Time {{ Math.floor(durationSec()) }}s</p>
+      </div>
+      <label>Alias</label>
+      <input name="alias" minlength="3" required />
+      <button type="submit">Enviar</button>
+      <button type="button" (click)="goMenu()">Regresar al Menú</button>
+      <a routerLink="/ranking">Ver ranking</a>
+    </form>
+    }
+    
+    @if (paused() && !gameOver()) {
+    <div class="pause-menu">
+      <p>JUEGO EN PAUSA</p>
+      <button type="button" (click)="resume()">Reanudar</button>
+      <button type="button" (click)="goMenu()">Regresar al Menú</button>
     </div>
-  
-    <div class="help">
-      ←/→ o A/D moverse • Espacio disparar • P/Esc pausar
-    </div>
-  </section>
-  
+    }
+  </div>
+  }
+
+  <div class="help">←/→ o A/D moverse • Espacio disparar • P/Esc pausar</div>
+</section>
