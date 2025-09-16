@@ -5,7 +5,7 @@ export interface ScorePostBody {
   points: number;
   maxCombo?: number;
   durationSec?: number;
-  metadata?: Record<string, unknown>;
+  metadata:string;
 }
 
 export interface ScoreCreated { id: string; }

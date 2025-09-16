@@ -14,20 +14,25 @@
 
 <section class="ranking-card">
   <h3>Top {{ limit() }}</h3>
-  @if (top(); as rows) {
-    <table>
-      <thead><tr><th>Alias</th><th>Puntos</th><th>Fecha</th></tr></thead>
-      <tbody>
-        @for (r of rows; track r.id) {
-          <tr>
-            <td>{{ r.alias }}</td>
-            <td>{{ r.points }}</td>
-            <td>{{ r.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  } @else {
-    <p>Sin datos.</p>
-  }
+  <div class="table-wrap">
+    @if (top(); as rows) {
+      <table>
+        <thead>
+          <tr><th>Alias</th><th>Puntos</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+          @for (r of rows; track r.id) {
+            <tr>
+              <td>{{ r.alias }}</td>
+              <td>{{ r.points }}</td>
+              <td>{{ r.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p>Sin datos.</p>
+    }
+  </div>
 </section>
+

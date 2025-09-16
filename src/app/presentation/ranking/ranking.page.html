@@ -1,8 +1,9 @@
 <section class="ranking">
     <h2>Top 10</h2>
     <div class="search">
-      <input #alias placeholder="Buscar por alias" />
-      <a [routerLink]="['/alias', alias.value]">Buscar</a>
+      <input #alias placeholder="Buscar por alias" (keyup.enter)="onSearch(alias.value)" />
+      <button type="button" (click)="onSearch(alias.value)">Buscar</button>
+      <a routerLink="/">Volver</a>
     </div>
   
     <table *ngIf="top() as rows">

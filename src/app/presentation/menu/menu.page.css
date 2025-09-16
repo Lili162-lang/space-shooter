@@ -144,3 +144,100 @@ a:hover {
   box-shadow: 0 0 15px rgba(138, 43, 226, 0.4);
   text-shadow: 0 0 8px rgba(138, 43, 226, 0.6);
 }
+
+:root{
+  --ui-bg:#1b1840;
+  --ui-bg-2:#2a255f;
+  --ui-border:#8ea6ff;
+  --ui-accent:#ffd34d;
+  --ui-text:#e9ecff;
+}
+
+/* Panel estilo retro */
+/* Contenedor de la tabla */
+.ranking-card .table-wrap {
+  overflow: auto;
+  border-radius: 8px;
+  border: 2px solid #c6b6e6; /* morado claro */
+  background: #f6f3fb;
+}
+
+/* Tabla */
+.ranking-card table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fdfcff; /* fondo base blanco/lila */
+  color: #2e2e2e;
+  font-size: 14px;
+}
+
+/* Encabezado */
+.ranking-card thead th {
+  padding: 10px 12px;
+  text-align: center;
+  background-color: #7b5fc5; /* morado más intenso */
+  color: #fff;
+  font-weight: 600;
+  border: 1px solid #6a50b2;
+}
+
+/* Filas */
+.ranking-card {
+  position: relative;
+  margin: 16px auto;
+  width: min(600px, 90vw);   /* antes 920px → ahora 600px */
+  padding: 12px;
+  border-radius: 8px;
+  background: #f6f3fb;
+  border: 2px solid #c6b6e6;
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.ranking-card h3 {
+  display: flex;
+  font-size: 25px;
+  margin-bottom: 8px;
+  color: #6a50b2;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.ranking-card tbody td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #d9c8f0;
+}
+
+/* Alternar color filas */
+.ranking-card tbody tr:nth-child(odd) {
+  background-color: #efe8fa;
+}
+
+.ranking-card tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* Hover */
+.ranking-card tbody tr:hover {
+  background-color: #e0d4f5;
+}
+
+/* Texto “Sin datos” */
+.ranking-card p {
+  margin: 12px 0;
+  text-align: center;
+  color: #6a50b2;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .ranking-card table {
+    font-size: 12px;
+  }
+  .ranking-card thead th,
+  .ranking-card tbody td {
+    padding: 6px 8px;
+  }
+}

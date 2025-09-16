@@ -323,22 +323,35 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     ]).then(() => {});
   }
 
-  submitAlias(target: EventTarget | null) {
-    if (!this.gameOver() || !target) return;
-    const form = target as HTMLFormElement;
-    const data = new FormData(form);
-    const alias = String(data.get('alias') ?? '').trim();
-    if (alias.length < 3) return;
-    this.scores
-      .postScore({
-        alias,
-        points: this.score(),
-        maxCombo: this.maxCombo(),
-        durationSec: Math.floor(this.durationSec()),
-        metadata: { version: 'ng19' },
-      })
-      .subscribe(() => this.router.navigateByUrl('/ranking'));
-  }
+  // arriba
+saving = signal(false);
+
+// submit
+submitAlias(target: EventTarget | null) {
+  if (!this.gameOver() || !target || this.saving()) return;
+  const form = target as HTMLFormElement;
+  const data = new FormData(form);
+  const alias = String(data.get('alias') ?? '').trim();
+  if (alias.length < 3) return;
+
+  const body = {
+    alias,
+    points: this.score(),
+    maxCombo: this.maxCombo(),
+    durationSec: Math.floor(this.durationSec()),
+    // Texto plano para metadata
+    metadata: `Dificultad: ${(history.state?.difficulty as string) ?? 'easy'} | Fecha: ${new Date().toLocaleString()}`
+  };
+
+  this.saving.set(true);
+  this.scores.postScore(body).subscribe({
+    next: () => this.router.navigateByUrl('/ranking'),
+    error: () => this.saving.set(false)
+  });
+}
+
+
+
   /*Botones */
   resume() {
     this.paused.set(false);

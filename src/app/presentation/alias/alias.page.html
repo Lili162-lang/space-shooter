@@ -1,22 +1,35 @@
-<section class="alias">
-    <h2>Historial de {{ alias() }}</h2>
-  
-    <table *ngIf="rows().length">
-      <thead>
-        <tr><th>Puntos</th><th>MaxCombo</th><th>Duración(s)</th><th>Fecha</th></tr>
-      </thead>
-      <tbody>
-        @for (r of rows(); track r.id) {
-          <tr>
-            <td>{{ r.points }}</td>
-            <td>{{ r.maxCombo || 0 }}</td>
-            <td>{{ r.durationSec || 0 }}</td>
-            <td>{{ r.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  
-    <a routerLink="/ranking">Volver al ranking</a>
-  </section>
-  
+<section class="alias-card">
+  <div class="actions">
+    <button type="button" class="back" (click)="goBack()">Regresar</button>
+  </div>
+
+  <h3>@if (alias()) { Historial de {{ alias() }} } @else { Sin resultados }</h3>
+
+  @if (loading()) { <p>Cargando…</p> }
+  @if (error()) { <p>{{ error() }}</p> }
+
+  <div class="table-wrap">
+    @if (rows().length) {
+      <table>
+        <thead>
+          <tr><th>Puntos</th><th>MaxCombo</th><th>Duración (s)</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+          @for (r of rows(); track r.id) {
+            <tr>
+              <td>{{ r.points }}</td>
+              <td>{{ r.maxCombo || 0 }}</td>
+              <td>{{ r.durationSec || 0 }}</td>
+              <td>{{ r.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else if (!loading()) {
+      <div class="empty">
+        <p>Sin resultados</p>
+        <a routerLink="/ranking">Volver al ranking</a>
+      </div>
+    }
+  </div>
+</section>
