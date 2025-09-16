@@ -1,0 +1,22 @@
+<section class="alias">
+    <h2>Historial de {{ alias() }}</h2>
+  
+    <table *ngIf="rows().length">
+      <thead>
+        <tr><th>Puntos</th><th>MaxCombo</th><th>Duración(s)</th><th>Fecha</th></tr>
+      </thead>
+      <tbody>
+        @for (r of rows(); track r.id) {
+          <tr>
+            <td>{{ r.points }}</td>
+            <td>{{ r.maxCombo || 0 }}</td>
+            <td>{{ r.durationSec || 0 }}</td>
+            <td>{{ r.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  
+    <a routerLink="/ranking">Volver al ranking</a>
+  </section>
+  

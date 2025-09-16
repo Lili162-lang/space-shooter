@@ -1,0 +1,4 @@
+.ranking { max-width: 640px; margin: 24px auto; display: grid; gap: 12px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+.search { display: flex; gap: 8px; }

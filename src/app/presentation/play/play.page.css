@@ -1,0 +1,5 @@
+.play { position: relative; width: 480px; margin: 20px auto; }
+canvas { width: 480px; height: 720px; border: 1px solid #333; background: #000; display: block; }
+.overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.overlay form { background:#111; color:#fff; padding:16px; border:1px solid #444; display:grid; gap:8px; width: 260px; }
+.help { text-align:center; margin-top:8px; font-size:12px; color:#666; }

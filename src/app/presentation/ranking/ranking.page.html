@@ -1,0 +1,25 @@
+<section class="ranking">
+    <h2>Top 10</h2>
+    <div class="search">
+      <input #alias placeholder="Buscar por alias" />
+      <a [routerLink]="['/alias', alias.value]">Buscar</a>
+    </div>
+  
+    <table *ngIf="top() as rows">
+      <thead>
+        <tr><th>Alias</th><th>Puntos</th><th>Fecha</th></tr>
+      </thead>
+      <tbody>
+        @for (r of rows; track r.id) {
+          <tr>
+            <td>{{ r.alias }}</td>
+            <td>{{ r.points }}</td>
+            <td>{{ r.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  
+    <a routerLink="/">Volver</a>
+  </section>
+  

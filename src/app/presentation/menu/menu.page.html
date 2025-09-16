@@ -1,0 +1,15 @@
+<section class="menu">
+    <h1>Space Shooter</h1>
+  
+    <label>Dificultad</label>
+    <div class="btns">
+      <button [class.active]="difficulty()==='easy'"    (click)="difficulty.set('easy')">Fácil</button>
+      <button [class.active]="difficulty()==='normal'"  (click)="difficulty.set('normal')">Normal</button>
+      <button [class.active]="difficulty()==='hard'"    (click)="difficulty.set('hard')">Difícil</button>
+    </div>
+  
+    <button class="primary" (click)="play()">Jugar</button>
+  
+    <a routerLink="/ranking">Top Ranking</a>
+  </section>
+  
