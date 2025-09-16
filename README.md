@@ -1,4 +1,3 @@
-# space-shooter
 # Space Shooter FE-001 — Frontend (Angular 19, Clean FE)
 
 Frontend del minijuego **Space Shooter** para el reto FE-001. Implementado en **Angular 19** con **Standalone Components**, arquitectura **Clean en Frontend** (domain / infrastructure / presentation / core) y Canvas 2D a ~60 FPS. Consume el backend .NET 8 a través de los endpoints `/api/v1/scores`.
