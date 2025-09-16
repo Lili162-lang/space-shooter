@@ -1,13 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BASE_API_URL } from '../../core/config/env';
+import { environment } from '../../core/config/env';
 import { ScorePostBody, ScoreCreated, ScoreTopItem, ScoreByAliasItem } from '../../domain/score/score.models';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ScoreHttpService {
   private readonly http = inject(HttpClient);
-  private readonly base = inject(BASE_API_URL);
+  private readonly base = environment.apiUrl;
+  // private readonly base = inject(environment.apiUrl);
 
   postScore(body: ScorePostBody): Observable<ScoreCreated> {
     return this.http.post<ScoreCreated>(`${this.base}/api/v1/scores`, body);

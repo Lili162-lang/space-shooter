@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } fr
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
-import { BASE_API_URL } from './core/config/env';
+import { environment } from './core/config/env';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,6 +11,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(HttpClientModule),
     provideHttpClient(withFetch()),
     // Cambia esta URL si usas environments o variables en tiempo de build
-    { provide: BASE_API_URL, useValue: 'http://localhost:5000' }
+    { provide: environment.apiUrl, useValue: environment.apiUrl }
   ]
 };
