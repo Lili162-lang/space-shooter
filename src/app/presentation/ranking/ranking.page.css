@@ -1,34 +1,99 @@
-.play {
-  position: relative;
-  width: 480px;
-  margin: 20px auto;
+/* Card */
+.ranking-card{
+  margin: 24px auto;
+  width: min(720px, 92vw);
+  padding: 14px;
+  border-radius: 12px;
+  background:
+    radial-gradient(900px 500px at 100% 0%, #2b1f61 0%, transparent 65%),
+    linear-gradient(180deg, #23164b 0%, #2e1d69 100%);
+  border: 2px solid #8ea6ff33;
+  box-shadow: 0 10px 24px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.05);
+  color: #e9ecff;
 }
-canvas {
-  width: 480px;
-  height: 720px;
-  border: 1px solid #333;
-  background: #000;
-  display: block;
+.ranking-card h3{
+  margin: 0 0 12px;
+  text-align: center;
+  font-weight: 800;
 }
-.overlay {
-  position: absolute;
-  inset: 0;
+
+/* Buscador */
+.search{
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 10px;
+  margin-bottom: 12px;
 }
-.overlay form {
-  background: #111;
-  color: #fff;
-  padding: 16px;
-  border: 1px solid #444;
-  display: grid;
-  gap: 8px;
-  width: 260px;
+.search input{
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 2px solid #c6b6e6;
+  background: #f6f3fb;     /* claro sobre fondo oscuro */
+  color: #2a2a2a;
 }
-.help {
-  text-align: center;
-  margin-top: 8px;
-  font-size: 12px;
-  color: #666;
+.search button{
+  padding: 10px 14px;
+  border: 3px solid #8b4513;
+  border-radius: 8px;
+  background: linear-gradient(145deg,#d2b48c 0%,#daa520 20%,#cd853f 80%,#8b4513 100%);
+  color:#2f1b14; font-weight:700; cursor:pointer;
+}
+.search a{
+  color:#cbb6ff; text-decoration:none;
+}
+.search a:hover{ text-decoration:underline; }
+
+/* Tabla lila clara */
+.table-wrap{
+  overflow:auto;
+  border-radius:10px;
+  border:2px solid #c6b6e6;
+  background:#f6f3fb;
+}
+table{
+  width:100%;
+  min-width:520px;
+  border-collapse:collapse;
+  background:#fdfcff;
+  color:#2e2e2e;
+  font-size:14px;
+}
+thead th{
+  padding:10px 12px;
+  text-align:center;
+  background:#7b5fc5;
+  color:#fff;
+  border:1px solid #6a50b2;
+  font-weight:600;
+}
+tbody td{
+  padding:9px 12px;
+  text-align:center;
+  border:1px solid #d9c8f0;
+}
+tbody tr:nth-child(odd){ background:#efe8fa; }
+tbody tr:nth-child(even){ background:#ffffff; }
+tbody tr:hover{ background:#e0d4f5; }
+.empty{ text-align:center; padding:12px; }
+
+/* Responsive */
+@media (max-width:600px){
+  table{ font-size:12px; }
+  thead th, tbody td{ padding:8px 10px; }
+}
+@media (max-width:420px){
+  table{ min-width:0; }
+  thead{ display:none; }
+  tbody tr{
+    display:grid; gap:8px; padding:12px; margin-bottom:10px;
+    border:2px solid #c6b6e6; border-radius:10px; background:#fffdfd;
+  }
+  tbody td{
+    display:grid; grid-template-columns:110px 1fr; padding:0; border:0;
+  }
+  tbody td:nth-child(1)::before{ content:"Alias"; color:#6a50b2; font-weight:700; }
+  tbody td:nth-child(2)::before{ content:"Puntos"; color:#6a50b2; font-weight:700; }
+  tbody td:nth-child(3)::before{ content:"Fecha"; color:#6a50b2; font-weight:700; }
 }
