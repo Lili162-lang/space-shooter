@@ -73,6 +73,12 @@ export class PlayPage implements AfterViewInit, OnDestroy {
   private explosions: Explosion[] = [];
   private explosionFrames: HTMLImageElement[] = [];
   private readonly explosionFPS = 16; // velocidad de animación
+
+  private sfx = {
+    explosion: new Audio('assets/sounds/sound-explosion.wav'),
+  };
+  private audioReady = false;
+
   ngAfterViewInit(): void {
     const c = this.canvasRef.nativeElement;
     c.width = 480;
@@ -94,6 +100,19 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     //integración img
     this.ctx.imageSmoothingEnabled = false; // pixel-art más nítido
     this.preloadSprites().then(() => (this.ready = true));
+
+    // SFX
+    this.sfx.explosion.preload = 'auto';
+    this.sfx.explosion.volume = 0.6;
+
+    // Desbloquear audio tras primera interacción del usuario
+    const unlock = () => {
+      this.audioReady = true;
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    window.addEventListener('pointerdown', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
   }
 
   ngOnDestroy(): void {
@@ -117,7 +136,13 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     else if (d === 'normal') this.spawnMs = 650;
     else this.spawnMs = 450;
   }
-
+  private playExplosion() {
+    if (!this.audioReady) return;
+    const a = this.sfx.explosion.cloneNode(true) as HTMLAudioElement; // permite solaparse
+    a.volume = this.sfx.explosion.volume;
+    a.currentTime = 0;
+    a.play().catch(() => {});
+  }
   togglePause() {
     if (this.gameOver()) return;
     this.paused.update((v) => !v);
@@ -219,6 +244,15 @@ export class PlayPage implements AfterViewInit, OnDestroy {
             if (this.aabb(b, en)) {
               b.alive = false;
               en.alive = false;
+              this.playExplosion(); // sonido
+              this.explosions.push({
+                x: en.x,
+                y: en.y,
+                w: en.w,
+                h: en.h,
+                frame: 0,
+                t: 0,
+              }); // ya lo tienes
               this.combo.update((c) => c + 1);
               this.maxCombo.update((m) => Math.max(m, this.combo()));
               this.score.update((s) => s + 100 * this.combo());
