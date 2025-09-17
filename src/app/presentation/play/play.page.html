@@ -1,5 +1,15 @@
 <section class="play">
   <canvas #canvas></canvas>
+  <!-- Popup de error -->
+  @if (errorMsg()) {
+  <div class="popup" role="alertdialog" aria-live="assertive">
+    <div class="popup-card">
+      <h4>Error de validación</h4>
+      <p>{{ errorMsg() }}</p>
+      <button type="button" (click)="errorMsg.set(null)">Cerrar</button>
+    </div>
+  </div>
+  }
 
   <!-- Overlay controles -->
   @if (paused() || gameOver()) {
@@ -8,7 +18,10 @@
     <form (submit)="submitAlias($event.target); $event.preventDefault()">
       <h3>Guardar puntaje</h3>
       <div class="score-info">
-        <p>Score {{ score() }} | MaxCombo {{ maxCombo() }} | Time {{ Math.floor(durationSec()) }}s</p>
+        <p>
+          Score {{ score() }} | MaxCombo {{ maxCombo() }} | Time {{
+          Math.floor(durationSec()) }}s
+        </p>
       </div>
       <label>Alias</label>
       <input name="alias" minlength="3" required />
@@ -16,9 +29,7 @@
 
       <button type="button" (click)="goMenu()">Regresar al Menú</button>
     </form>
-    }
-    
-    @if (paused() && !gameOver()) {
+    } @if (paused() && !gameOver()) {
     <div class="pause-menu">
       <p>JUEGO EN PAUSA</p>
       <button type="button" (click)="resume()">Reanudar</button>
@@ -28,5 +39,8 @@
   </div>
   }
 
-  <div class="help">←/→ o A/D moverse • Espacio disparar • P/Esc pausar • Tocar y arrastrar en pantalla para mover y disparar</div>
+  <div class="help">
+    ←/→ o A/D moverse • Espacio disparar • P/Esc pausar • Tocar y arrastrar en
+    pantalla para mover y disparar
+  </div>
 </section>

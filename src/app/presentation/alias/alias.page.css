@@ -20,10 +20,12 @@
   
   /* Tabla morado claro */
   .table-wrap{
-    overflow:auto;
-    border-radius:10px;
-    border:2px solid #c6b6e6;      /* morado claro */
-    background:#f6f3fb;
+    overflow: scroll;
+    overflow-x: hidden;
+    border-radius: 8px;
+    border: 2px solid #c6b6e6;
+    background: #f6f3fb;
+    max-height: 400px;
   }
   
   .alias-card table{
@@ -100,4 +102,11 @@
     background: linear-gradient(145deg,#ffcc66 0%,#ffb84d 35%,#d28a2d 100%);
   }
   
-  
+  .empty-text{
+    margin: 0;
+    font-size: 16px;
+    color: #2c2a30e7;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 12px;
+  }

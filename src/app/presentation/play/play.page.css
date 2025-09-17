@@ -26,6 +26,7 @@ canvas {
   background: rgba(15, 15, 35, 0.85);
   backdrop-filter: blur(8px);
   border-radius: 12px;
+  z-index: 20;
 }
 
 .overlay form {
@@ -218,4 +219,59 @@ canvas{
   -ms-touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+}
+/* Popup de error */
+.popup {
+  position: absolute;
+  z-index: 30;   
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;            /* no bloquea el canvas ni el overlay */
+}
+
+.popup-card {
+  margin-top: 16px;
+  pointer-events: auto;            /* sí permite clics en el propio popup */
+  background: linear-gradient(135deg, #1a0033 0%, #1f173a 50%, #211122 100%);
+  color: #fff;
+  padding: 16px 18px;
+  border: 2px solid #ff4d7a;       /* resalta error */
+  border-radius: 12px;
+  min-width: 260px;
+  box-shadow: 0 8px 24px rgba(255, 77, 122, 0.25);
+  pointer-events: auto;
+}
+
+.popup-card h4 {
+  margin: 0 0 6px 0;
+  font-size: 16px;
+  color: #ffd6e0;
+  text-shadow: 0 0 6px rgba(255, 77, 122, 0.6);
+}
+
+.popup-card p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #ffe6ec;
+}
+
+.popup-card button {
+  padding: 8px 12px;
+  border: 2px solid #ff4d7a;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffe6ec;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.popup-card button:hover {
+  background: rgba(255, 77, 122, 0.15);
+  box-shadow: 0 0 10px rgba(255, 77, 122, 0.35);
+  transform: translateY(-1px);
 }

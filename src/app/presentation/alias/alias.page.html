@@ -36,8 +36,8 @@
     } @else if (!loading() && alias()) {
       <!-- Caso: alias válido pero sin puntajes -->
       <div class="empty">
-        <p>El personaje <strong>{{ alias() }}</strong> aún no tiene puntajes</p>
-        <a routerLink="/ranking">Volver al ranking</a>
+        <p class="empty-text">El personaje <strong>{{ alias() }}</strong> aún no tiene puntajes o no existe</p>
+
       </div>
     } @else if (!loading()) {
       <!-- Caso: no hay alias en la URL -->

@@ -55,7 +55,10 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     const c = this.canvasRef.nativeElement;
     const r = c.getBoundingClientRect();
     const xCanvas = ((e.clientX - r.left) / r.width) * 480; // coord canvas
-    this.player.x = Math.max(0, Math.min(480 - this.player.w, xCanvas - this.player.w / 2));
+    this.player.x = Math.max(
+      0,
+      Math.min(480 - this.player.w, xCanvas - this.player.w / 2)
+    );
   };
 
   private onPointerDown = (e: PointerEvent) => {
@@ -66,7 +69,7 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     this.pointerDown = true;
     this.pointerId = e.pointerId;
     this.updatePlayerFromPointer(e); // mueve al toque
-    this.shoot();                    // tap dispara
+    this.shoot(); // tap dispara
     this.lastShotMs = e.timeStamp;
   };
 
@@ -75,7 +78,7 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     e.preventDefault();
     this.updatePlayerFromPointer(e); // drag para mover
   };
-  
+
   private onPointerUp = (e: PointerEvent) => {
     if (e.pointerId !== this.pointerId) return;
     e.preventDefault();
@@ -87,13 +90,14 @@ export class PlayPage implements AfterViewInit, OnDestroy {
   Math = Math;
 
   // HUD
-  score = signal(0);
-  life = signal(100);
-  combo = signal(0);
-  maxCombo = signal(0);
+  errorMsg = signal<string | null>(null);
+  gameOver = signal(false);
   durationSec = signal(0);
   paused = signal(false);
-  gameOver = signal(false);
+  maxCombo = signal(0);
+  life = signal(100);
+  score = signal(0);
+  combo = signal(0);
 
   private ctx!: CanvasRenderingContext2D;
   private req = 0;
@@ -115,6 +119,7 @@ export class PlayPage implements AfterViewInit, OnDestroy {
 
   private sfx = {
     explosion: new Audio('assets/sounds/sound-explosion.wav'),
+    hit: new Audio('assets/sounds/crash.wav'),
   };
   private audioReady = false;
 
@@ -127,12 +132,16 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     this.ctx = ctx;
 
     const canvasEl = this.canvasRef.nativeElement;
-    canvasEl.addEventListener('pointerdown', this.onPointerDown, { passive: false });
-    canvasEl.addEventListener('pointermove', this.onPointerMove, { passive: false });
+    canvasEl.addEventListener('pointerdown', this.onPointerDown, {
+      passive: false,
+    });
+    canvasEl.addEventListener('pointermove', this.onPointerMove, {
+      passive: false,
+    });
     window.addEventListener('pointerup', this.onPointerUp, { passive: false });
 
     // bloquea menú contextual por long-press
-canvasEl.addEventListener('contextmenu', (e) => e.preventDefault());
+    canvasEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
     // dificultad desde navigation state
     const st = history.state as { difficulty?: 'easy' | 'normal' | 'hard' };
@@ -151,6 +160,9 @@ canvasEl.addEventListener('contextmenu', (e) => e.preventDefault());
     // SFX
     this.sfx.explosion.preload = 'auto';
     this.sfx.explosion.volume = 0.6;
+    this.sfx.hit.preload = 'auto';
+this.sfx.hit.volume = 0.7;
+
 
     // Desbloquear audio tras primera interacción del usuario
     const unlock = () => {
@@ -167,9 +179,9 @@ canvasEl.addEventListener('contextmenu', (e) => e.preventDefault());
     window.removeEventListener('keydown', this.onKey);
     window.removeEventListener('keyup', this.onKey);
     const canvasEl = this.canvasRef.nativeElement;
-canvasEl.removeEventListener('pointerdown', this.onPointerDown);
-canvasEl.removeEventListener('pointermove', this.onPointerMove);
-window.removeEventListener('pointerup', this.onPointerUp);
+    canvasEl.removeEventListener('pointerdown', this.onPointerDown);
+    canvasEl.removeEventListener('pointermove', this.onPointerMove);
+    window.removeEventListener('pointerup', this.onPointerUp);
   }
 
   // play.page.ts
@@ -194,6 +206,16 @@ window.removeEventListener('pointerup', this.onPointerUp);
     a.currentTime = 0;
     a.play().catch(() => {});
   }
+
+  private playHit() {
+    if (!this.audioReady) return;
+    const a = this.sfx.hit.cloneNode(true) as HTMLAudioElement;
+    a.volume = this.sfx.hit.volume;
+    a.currentTime = 0;
+    a.play().catch(() => {});
+  }
+  
+
   togglePause() {
     if (this.gameOver()) return;
     this.paused.update((v) => !v);
@@ -252,10 +274,14 @@ window.removeEventListener('pointerup', this.onPointerUp);
     }
 
     // autofire mientras el dedo esté apoyado
-if (this.pointerDown && this.autoFire && ts - this.lastShotMs >= this.fireEveryMs) {
-  this.shoot();
-  this.lastShotMs = ts;
-}
+    if (
+      this.pointerDown &&
+      this.autoFire &&
+      ts - this.lastShotMs >= this.fireEveryMs
+    ) {
+      this.shoot();
+      this.lastShotMs = ts;
+    }
 
     // tiempo
     this.durationSec.update((t) => t + dt);
@@ -290,7 +316,9 @@ if (this.pointerDown && this.autoFire && ts - this.lastShotMs >= this.fireEveryM
         en.alive = false;
         this.combo.set(0);
         this.life.update((l) => Math.max(0, l - 10));
+        this.playHit()
       }
+
     }
 
     // collisions bullets vs enemies
@@ -344,6 +372,7 @@ if (this.pointerDown && this.autoFire && ts - this.lastShotMs >= this.fireEveryM
         en.alive = false;
         this.combo.set(0);
         this.life.update((l) => Math.max(0, l - 25));
+        this.playHit();
       }
 
     if (this.life() <= 0) this.gameOver.set(true);
@@ -492,30 +521,50 @@ if (this.pointerDown && this.autoFire && ts - this.lastShotMs >= this.fireEveryM
   saving = signal(false);
 
   // submit
+  private showError(msg: string) {
+    this.errorMsg.set(msg);
+    // autocierre opcional en 3.5 s
+    setTimeout(() => {
+      if (this.errorMsg() === msg) this.errorMsg.set(null);
+    }, 3500);
+  }
+  
+  // --- en submitAlias(...) reemplaza tu método por ---
   submitAlias(target: EventTarget | null) {
     if (!this.gameOver() || !target || this.saving()) return;
     const form = target as HTMLFormElement;
     const data = new FormData(form);
     const alias = String(data.get('alias') ?? '').trim();
-    if (alias.length < 3) return;
-
+  
+    // Validación frontend
+    if (alias.length < 3 || alias.length > 30) {
+      this.showError('El alias debe tener entre 3 y 30 caracteres.');
+      return;
+    }
+  
     const body = {
       alias,
       points: this.score(),
       maxCombo: this.maxCombo(),
       durationSec: Math.floor(this.durationSec()),
-      // Texto plano para metadata
       metadata: `Dificultad: ${
         (history.state?.difficulty as string) ?? 'easy'
       } | Fecha: ${new Date().toLocaleString()}`,
     };
-
+  
     this.saving.set(true);
     this.scores.postScore(body).subscribe({
       next: () => this.router.navigateByUrl('/ranking'),
-      error: () => this.saving.set(false),
+      error: (err) => {
+        this.saving.set(false);
+        const msg =
+          err?.error?.error ??
+          'No se pudo guardar el puntaje. Intenta de nuevo.';
+        this.showError(msg);
+      },
     });
   }
+  
 
   /*Botones */
   resume() {
