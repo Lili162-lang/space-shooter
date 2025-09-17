@@ -20,9 +20,18 @@ type Vec = {
   h: number;
   vx?: number;
   vy?: number;
-  alive?: boolean;   
+  alive?: boolean;
   angle?: number; // rotación en radianes
-  spin?: number;         
+  spin?: number;
+};
+
+type Explosion = {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  frame: number; // índice de frame
+  t: number; // tiempo acumulado (s)
 };
 
 @Component({
@@ -61,6 +70,9 @@ export class PlayPage implements AfterViewInit, OnDestroy {
   private readonly scores = inject(ScoreHttpService);
   private readonly destroyRef = inject(DestroyRef);
 
+  private explosions: Explosion[] = [];
+  private explosionFrames: HTMLImageElement[] = [];
+  private readonly explosionFPS = 16; // velocidad de animación
   ngAfterViewInit(): void {
     const c = this.canvasRef.nativeElement;
     c.width = 480;
@@ -138,7 +150,7 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       alive: true,
     });
   }
-  
+
   private spawnEnemy() {
     const x = Math.random() * (480 - 36);
     this.enemies.push({
@@ -148,8 +160,8 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       h: 36,
       vy: 2 + Math.random() * 1.5,
       alive: true,
-      angle: Math.random() * Math.PI * 2,           // arranca en ángulo random
-    spin: (Math.random() - 0.5) * 0.1 
+      angle: Math.random() * Math.PI * 2, // arranca en ángulo random
+      spin: (Math.random() - 0.5) * 0.1,
     });
   }
 
@@ -195,10 +207,9 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       if (en.y > 760) {
         en.alive = false;
         this.combo.set(0);
-        this.life.update(l => Math.max(0, l - 10));
+        this.life.update((l) => Math.max(0, l - 10));
       }
     }
-    
 
     // collisions bullets vs enemies
     for (const b of this.bullets)
@@ -211,10 +222,31 @@ export class PlayPage implements AfterViewInit, OnDestroy {
               this.combo.update((c) => c + 1);
               this.maxCombo.update((m) => Math.max(m, this.combo()));
               this.score.update((s) => s + 100 * this.combo());
+              this.explosions.push({
+                x: en.x,
+                y: en.y,
+                w: en.w,
+                h: en.h,
+                frame: 0,
+                t: 0,
+              });
             }
           }
       }
 
+    const frameDt = 1 / this.explosionFPS;
+    for (const ex of this.explosions) {
+      ex.t += dt;
+      while (ex.t >= frameDt) {
+        ex.t -= frameDt;
+        ex.frame++;
+      }
+    }
+
+    // eliminar terminadas
+    this.explosions = this.explosions.filter(
+      (ex) => ex.frame < this.explosionFrames.length
+    );
     // enemy vs player
     for (const en of this.enemies)
       if (en.alive && this.aabb(en, this.player)) {
@@ -286,7 +318,18 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       this.ctx.fillStyle = '#f55';
       for (const e of this.enemies) this.ctx.fillRect(e.x, e.y, e.w, e.h);
     }
-    
+
+    // explosiones
+    if (this.ready && this.explosionFrames.length) {
+      for (const ex of this.explosions) {
+        const img =
+          this.explosionFrames[
+            Math.min(ex.frame, this.explosionFrames.length - 1)
+          ];
+        // centra el frame sobre el enemigo original
+        this.ctx.drawImage(img, ex.x, ex.y, ex.w, ex.h);
+      }
+    }
 
     // HUD
     ctx.fillStyle = '#0f0';
@@ -327,43 +370,61 @@ export class PlayPage implements AfterViewInit, OnDestroy {
         im.onload = () => res();
         im.src = src;
       });
+    // crea frames de explosión
+    this.explosionFrames = [new Image(), new Image(), new Image(), new Image()];
 
     return Promise.all([
       setSrc(this.img.ship, 'assets/sprites/ship.png'),
       setSrc(this.img.asteroid, 'assets/sprites/asteroid.png'),
       setSrc(this.img.bg, 'assets/sprites/bg.png'),
       setSrc(this.img.shoot, 'assets/sprites/shoot.png'),
+      setSrc(
+        this.explosionFrames[0],
+        'assets/sprites/explosions/explosion1.png'
+      ),
+      setSrc(
+        this.explosionFrames[1],
+        'assets/sprites/explosions/explosion2.png'
+      ),
+      setSrc(
+        this.explosionFrames[2],
+        'assets/sprites/explosions/explosion3.png'
+      ),
+      setSrc(
+        this.explosionFrames[3],
+        'assets/sprites/explosions/explosion4.png'
+      ),
     ]).then(() => {});
   }
 
   // arriba
-saving = signal(false);
+  saving = signal(false);
 
-// submit
-submitAlias(target: EventTarget | null) {
-  if (!this.gameOver() || !target || this.saving()) return;
-  const form = target as HTMLFormElement;
-  const data = new FormData(form);
-  const alias = String(data.get('alias') ?? '').trim();
-  if (alias.length < 3) return;
+  // submit
+  submitAlias(target: EventTarget | null) {
+    if (!this.gameOver() || !target || this.saving()) return;
+    const form = target as HTMLFormElement;
+    const data = new FormData(form);
+    const alias = String(data.get('alias') ?? '').trim();
+    if (alias.length < 3) return;
 
-  const body = {
-    alias,
-    points: this.score(),
-    maxCombo: this.maxCombo(),
-    durationSec: Math.floor(this.durationSec()),
-    // Texto plano para metadata
-    metadata: `Dificultad: ${(history.state?.difficulty as string) ?? 'easy'} | Fecha: ${new Date().toLocaleString()}`
-  };
+    const body = {
+      alias,
+      points: this.score(),
+      maxCombo: this.maxCombo(),
+      durationSec: Math.floor(this.durationSec()),
+      // Texto plano para metadata
+      metadata: `Dificultad: ${
+        (history.state?.difficulty as string) ?? 'easy'
+      } | Fecha: ${new Date().toLocaleString()}`,
+    };
 
-  this.saving.set(true);
-  this.scores.postScore(body).subscribe({
-    next: () => this.router.navigateByUrl('/ranking'),
-    error: () => this.saving.set(false)
-  });
-}
-
-
+    this.saving.set(true);
+    this.scores.postScore(body).subscribe({
+      next: () => this.router.navigateByUrl('/ranking'),
+      error: () => this.saving.set(false),
+    });
+  }
 
   /*Botones */
   resume() {
