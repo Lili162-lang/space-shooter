@@ -20,7 +20,9 @@ type Vec = {
   h: number;
   vx?: number;
   vy?: number;
-  alive?: boolean;
+  alive?: boolean;   
+  angle?: number; // rotación en radianes
+  spin?: number;         
 };
 
 @Component({
@@ -136,7 +138,7 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       alive: true,
     });
   }
-
+  
   private spawnEnemy() {
     const x = Math.random() * (480 - 36);
     this.enemies.push({
@@ -146,6 +148,8 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       h: 36,
       vy: 2 + Math.random() * 1.5,
       alive: true,
+      angle: Math.random() * Math.PI * 2,           // arranca en ángulo random
+    spin: (Math.random() - 0.5) * 0.1 
     });
   }
 
@@ -187,12 +191,14 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     for (const en of this.enemies) {
       if (!en.alive) continue;
       en.y += en.vy!;
+      if (en.spin) en.angle = (en.angle ?? 0) + en.spin;
       if (en.y > 760) {
         en.alive = false;
         this.combo.set(0);
-        this.life.update((l) => Math.max(0, l - 10));
+        this.life.update(l => Math.max(0, l - 10));
       }
     }
+    
 
     // collisions bullets vs enemies
     for (const b of this.bullets)
@@ -268,12 +274,19 @@ export class PlayPage implements AfterViewInit, OnDestroy {
 
     // enemigos
     if (this.ready) {
-      for (const e of this.enemies)
-        ctx.drawImage(this.img.asteroid, e.x, e.y, e.w, e.h);
+      for (const e of this.enemies) {
+        const angle = e.angle ?? 0;
+        this.ctx.save();
+        this.ctx.translate(e.x + e.w / 2, e.y + e.h / 2); // centro del sprite
+        this.ctx.rotate(angle);
+        this.ctx.drawImage(this.img.asteroid, -e.w / 2, -e.h / 2, e.w, e.h);
+        this.ctx.restore();
+      }
     } else {
-      ctx.fillStyle = '#f55';
-      for (const e of this.enemies) ctx.fillRect(e.x, e.y, e.w, e.h);
+      this.ctx.fillStyle = '#f55';
+      for (const e of this.enemies) this.ctx.fillRect(e.x, e.y, e.w, e.h);
     }
+    
 
     // HUD
     ctx.fillStyle = '#0f0';
