@@ -156,7 +156,11 @@ a:hover {
 /* Panel estilo retro */
 /* Contenedor de la tabla */
 .ranking-card .table-wrap {
-  overflow: auto;
+  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 400px;
+  scrollbar-gutter: stable both-edges;
   border-radius: 8px;
   border: 2px solid #c6b6e6; /* morado claro */
   background: #f6f3fb;

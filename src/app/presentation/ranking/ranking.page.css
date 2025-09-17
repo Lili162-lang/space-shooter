@@ -47,10 +47,13 @@
 
 /* Tabla lila clara */
 .table-wrap{
-  overflow:auto;
+  overflow: scroll;
+  overflow-x: hidden;
   border-radius:10px;
   border:2px solid #c6b6e6;
   background:#f6f3fb;
+  max-height: 400px;
+    scrollbar-gutter: stable both-edges;
 }
 table{
   width:100%;

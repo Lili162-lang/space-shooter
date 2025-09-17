@@ -20,12 +20,10 @@
   
   /* Tabla morado claro */
   .table-wrap{
-    overflow: scroll;
-    overflow-x: hidden;
+    overflow: hidden;
     border-radius: 8px;
     border: 2px solid #c6b6e6;
     background: #f6f3fb;
-    max-height: 400px;
   }
   
   .alias-card table{
