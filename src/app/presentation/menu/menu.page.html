@@ -27,23 +27,23 @@
   <a routerLink="/ranking">Top Ranking</a>
 </section>
 
-<h3>Top {{ limit() }}</h3>
-
-<div class="top-controls">
-  <input
-    #n
-    type="number"
-    min="1"
-    max="100"
-    [value]="limit()"
-    placeholder="Límite"
-    (keyup.enter)="applyLimit(n.value)"
-  />
-  <button type="button" (click)="applyLimit(n.value)">Aplicar</button>
-</div>
-
 <section class="ranking-card">
-  <h3>Top {{ limit() }}</h3>
+
+  <div class="compact">
+    <h3>Top {{ limit() }}</h3>
+    <div class="top-controls">
+      <input
+        #n
+        type="number"
+        min="1"
+        max="100"
+        [value]="limit()"
+        placeholder="Límite"
+        (keyup.enter)="applyLimit(n.value)"
+      />
+      <button type="button" (click)="applyLimit(n.value)">Aplicar</button>
+    </div>
+  </div>
   <div class="table-wrap">
     @if (top(); as rows) {
     <table>

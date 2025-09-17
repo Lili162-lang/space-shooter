@@ -252,3 +252,67 @@ a:hover {
   background:linear-gradient(145deg,#e6a93b 0%,#d1841c 55%,#b66a16 100%);
   color:#1e1208; font-weight:800; cursor:pointer;
 }
+/* La card de ranking arriba y compacta */
+.ranking-card.compact{
+  margin: 0 0 24px;                /* arriba del todo */
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background:
+    radial-gradient(900px 500px at 100% 0%, #2b1f61 0%, transparent 65%),
+    linear-gradient(180deg, #23164b 0%, #2e1d69 100%);
+  border: 2px solid rgba(206,210,255,.25);
+  box-shadow: 0 10px 24px rgba(0,0,0,.45), inset 0 0 0 2px rgba(255,255,255,.05);
+  color: #e9ecff;
+}
+
+.ranking-card.compact h3{
+  margin: 0 0 10px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.ranking-card.compact .top-controls{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.ranking-card.compact .top-controls input{
+  height: 38px; min-width: 110px; padding: 0 10px;
+  border-radius: 8px; border: 2px solid #c7baf3;
+  background: #f6f3fb; color:#2a2a2a;
+}
+.ranking-card.compact .top-controls button{
+  height: 38px; padding: 0 14px; border-radius: 8px;
+  border: 3px solid #8b4513;
+  background: linear-gradient(145deg,#e6a93b 0%,#d1841c 55%,#b66a16 100%);
+  color:#1e1208; font-weight:800; cursor:pointer;
+}
+
+/* Tabla clara */
+.ranking-card.compact .table-wrap{
+  overflow:auto; border-radius:10px; border:2px solid #c6b6e6; background:#f6f3fb;
+}
+.ranking-card.compact table{
+  width:100%; min-width:520px; border-collapse:collapse; background:#fdfcff; color:#2e2e2e;
+}
+.ranking-card.compact thead th{
+  padding:10px 12px; text-align:center;
+  background: linear-gradient(#8b6fd8, #7b5fc5); color:#fff; border:1px solid #6a50b2; font-weight:800;
+}
+.ranking-card.compact tbody td{
+  padding:9px 12px; text-align:center; border:1px solid #d9c8f0;
+}
+.ranking-card.compact tbody tr:nth-child(odd){ background:#efe8fa; }
+.ranking-card.compact tbody tr:nth-child(even){ background:#ffffff; }
+
+/* Reduce separación del bloque menú para que todo quede arriba */
+.menu{ max-width: 520px; margin: 24px auto; display: grid; gap: 16px; text-align: center; }
+
+.compact{
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  flex-direction: column;
+}
