@@ -44,6 +44,45 @@ export class PlayPage implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true })
   canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  // --- Touch state ---
+  private pointerDown = false;
+  private pointerId: number | null = null;
+  private lastShotMs = 0;
+  private autoFire = true;
+  private readonly fireEveryMs = 200;
+
+  private updatePlayerFromPointer = (e: PointerEvent) => {
+    const c = this.canvasRef.nativeElement;
+    const r = c.getBoundingClientRect();
+    const xCanvas = ((e.clientX - r.left) / r.width) * 480; // coord canvas
+    this.player.x = Math.max(0, Math.min(480 - this.player.w, xCanvas - this.player.w / 2));
+  };
+
+  private onPointerDown = (e: PointerEvent) => {
+    if (this.gameOver()) return;
+    e.preventDefault();
+    const c = this.canvasRef.nativeElement;
+    c.setPointerCapture(e.pointerId);
+    this.pointerDown = true;
+    this.pointerId = e.pointerId;
+    this.updatePlayerFromPointer(e); // mueve al toque
+    this.shoot();                    // tap dispara
+    this.lastShotMs = e.timeStamp;
+  };
+
+  private onPointerMove = (e: PointerEvent) => {
+    if (!this.pointerDown || e.pointerId !== this.pointerId) return;
+    e.preventDefault();
+    this.updatePlayerFromPointer(e); // drag para mover
+  };
+  
+  private onPointerUp = (e: PointerEvent) => {
+    if (e.pointerId !== this.pointerId) return;
+    e.preventDefault();
+    this.pointerDown = false;
+    this.pointerId = null;
+  };
+
   // Expose Math to template
   Math = Math;
 
@@ -87,6 +126,14 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     if (!ctx) return;
     this.ctx = ctx;
 
+    const canvasEl = this.canvasRef.nativeElement;
+    canvasEl.addEventListener('pointerdown', this.onPointerDown, { passive: false });
+    canvasEl.addEventListener('pointermove', this.onPointerMove, { passive: false });
+    window.addEventListener('pointerup', this.onPointerUp, { passive: false });
+
+    // bloquea menú contextual por long-press
+canvasEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
     // dificultad desde navigation state
     const st = history.state as { difficulty?: 'easy' | 'normal' | 'hard' };
     this.setDifficulty(st?.difficulty ?? 'easy');
@@ -119,6 +166,10 @@ export class PlayPage implements AfterViewInit, OnDestroy {
     cancelAnimationFrame(this.req);
     window.removeEventListener('keydown', this.onKey);
     window.removeEventListener('keyup', this.onKey);
+    const canvasEl = this.canvasRef.nativeElement;
+canvasEl.removeEventListener('pointerdown', this.onPointerDown);
+canvasEl.removeEventListener('pointermove', this.onPointerMove);
+window.removeEventListener('pointerup', this.onPointerUp);
   }
 
   // play.page.ts
@@ -199,6 +250,12 @@ export class PlayPage implements AfterViewInit, OnDestroy {
       this.render();
       return;
     }
+
+    // autofire mientras el dedo esté apoyado
+if (this.pointerDown && this.autoFire && ts - this.lastShotMs >= this.fireEveryMs) {
+  this.shoot();
+  this.lastShotMs = ts;
+}
 
     // tiempo
     this.durationSec.update((t) => t + dt);

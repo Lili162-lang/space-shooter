@@ -10,10 +10,10 @@ import { ScoreTopItem } from '../../domain/score/score.models';
   standalone: true,
   imports: [RouterLink, DatePipe],
   templateUrl: './menu.page.html',
-  styleUrl: './menu.page.css'
+  styleUrl: './menu.page.css',
 })
 export class MenuPage implements OnInit {
-  difficulty = signal<'easy'|'normal'|'hard'>('easy');
+  difficulty = signal<'easy' | 'normal' | 'hard'>('easy');
 
   private api = inject(ScoreHttpService);
   top = signal<ScoreTopItem[] | null>(null);
@@ -21,13 +21,24 @@ export class MenuPage implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit() { this.loadTop(); }
-
-  play() {
-    this.router.navigateByUrl('/play', { state: { difficulty: this.difficulty() } });
+  ngOnInit() {
+    this.loadTop();
   }
 
   loadTop() {
-    this.api.getTop(this.limit()).subscribe(rows => this.top.set(rows));
+    this.api.getTop(this.limit()).subscribe((rows) => this.top.set(rows));
+  }
+
+  applyLimit(v: string | number) {
+    const n = Math.max(1, Math.min(100, Number(v) || 10)); // 1..100
+    if (n === this.limit()) return;
+    this.limit.set(n);
+    this.loadTop();
+  }
+
+  play() {
+    this.router.navigateByUrl('/play', {
+      state: { difficulty: this.difficulty() },
+    });
   }
 }

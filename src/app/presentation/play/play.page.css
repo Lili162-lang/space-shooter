@@ -212,3 +212,10 @@ a:hover {
   background: rgba(138, 43, 226, 0.2);
   box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
 }
+
+canvas{
+  touch-action: none;
+  -ms-touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

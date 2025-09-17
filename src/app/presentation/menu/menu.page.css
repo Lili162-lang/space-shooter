@@ -241,3 +241,14 @@ a:hover {
     padding: 6px 8px;
   }
 }
+
+.top-controls{ display:flex; gap:10px; align-items:center; margin:8px 0 12px; }
+.top-controls input{
+  height:38px; padding:0 10px; border-radius:8px; border:2px solid #c7baf3;
+  background:#f6f3fb; color:#2a2a2a; min-width:110px;
+}
+.top-controls button{
+  height:38px; padding:0 14px; border-radius:8px; border:3px solid #8b4513;
+  background:linear-gradient(145deg,#e6a93b 0%,#d1841c 55%,#b66a16 100%);
+  color:#1e1208; font-weight:800; cursor:pointer;
+}

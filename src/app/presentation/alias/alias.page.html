@@ -5,14 +5,22 @@
 
   <h3>@if (alias()) { Historial de {{ alias() }} } @else { Sin resultados }</h3>
 
-  @if (loading()) { <p>Cargando…</p> }
-  @if (error()) { <p>{{ error() }}</p> }
+  @if (loading()) {
+  <p>Cargando…</p>
+  } @if (error()) {
+  <p>{{ error() }}</p>
+  }
 
   <div class="table-wrap">
     @if (rows().length) {
       <table>
         <thead>
-          <tr><th>Puntos</th><th>MaxCombo</th><th>Duración (s)</th><th>Fecha</th></tr>
+          <tr>
+            <th>Puntos</th>
+            <th>MaxCombo</th>
+            <th>Duración (s)</th>
+            <th>Fecha</th>
+          </tr>
         </thead>
         <tbody>
           @for (r of rows(); track r.id) {
@@ -25,11 +33,19 @@
           }
         </tbody>
       </table>
+    } @else if (!loading() && alias()) {
+      <!-- Caso: alias válido pero sin puntajes -->
+      <div class="empty">
+        <p>El personaje <strong>{{ alias() }}</strong> aún no tiene puntajes</p>
+        <a routerLink="/ranking">Volver al ranking</a>
+      </div>
     } @else if (!loading()) {
+      <!-- Caso: no hay alias en la URL -->
       <div class="empty">
         <p>Sin resultados</p>
         <a routerLink="/ranking">Volver al ranking</a>
       </div>
     }
   </div>
+  
 </section>
